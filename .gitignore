@@ -1,0 +1,7 @@
+# Binaries and test artifacts
+*.test
+*.out
+
+# Go workspace files
+go.work
+go.work.sum
