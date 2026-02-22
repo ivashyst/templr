@@ -1,5 +1,7 @@
 # templr
 
+[![pipeline status](https://github.com/ivashyst/templr/actions/workflows/ci.yml/badge.svg)](https://github.com/ivashyst/templr/actions/workflows/ci.yml)
+
 A lightweight `html/template` renderer for Go with layout inheritance, template caching, and zero external dependencies.
 
 ## What it is
