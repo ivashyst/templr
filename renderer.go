@@ -8,6 +8,8 @@ import (
 	"net/http"
 )
 
+// Renderer parses and caches html/template files from an fs.FS and renders
+// them into HTTP responses. Use New or MustNew to create one.
 type Renderer struct {
 	cache      templateCache
 	funcs      template.FuncMap
@@ -15,6 +17,8 @@ type Renderer struct {
 	fsys       fs.FS
 }
 
+// New creates a Renderer backed by fsys, building the template cache eagerly.
+// Returns an error if any template fails to parse.
 func New(fsys fs.FS, opts ...Option) (*Renderer, error) {
 	r := &Renderer{fsys: fsys}
 
@@ -32,6 +36,8 @@ func New(fsys fs.FS, opts ...Option) (*Renderer, error) {
 	return r, nil
 }
 
+// Must panics if err is non-nil, otherwise returns r. Intended for use with New
+// at program startup: Must(New(fsys, opts...)).
 func Must(r *Renderer, err error) *Renderer {
 	if err != nil {
 		panic(err)
@@ -40,10 +46,16 @@ func Must(r *Renderer, err error) *Renderer {
 	return r
 }
 
+// MustNew is shorthand for Must(New(fsys, opts...)). Panics on parse errors.
 func MustNew(fsys fs.FS, opts ...Option) *Renderer {
 	return Must(New(fsys, opts...))
 }
 
+// Render executes the named template and writes the result to w with a
+// text/html content type. templateName must match a path under templates/pages/
+// or templates/errors/ (e.g. "pages/home", "errors/404").
+// The response is buffered so a template execution error does not produce a
+// partial 200 response.
 func (t *Renderer) Render(w http.ResponseWriter, templateName string, data any) error {
 	cache := t.cache
 	if t.autoReload {
